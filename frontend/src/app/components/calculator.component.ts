@@ -1,8 +1,8 @@
 import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CdbCalculatorService, CdbCalculationResponse } from './services/cdb-calculator.service';
-import { LoadingService } from './services/loading.service';
+import { CdbCalculatorService, CdbCalculationResponse } from '../services/cdb-calculator.service';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-calculator',
@@ -225,7 +225,7 @@ import { LoadingService } from './services/loading.service';
 export class CalculatorComponent implements OnInit {
   form!: FormGroup;
   result = signal<CdbCalculationResponse | null>(null);
-  isLoading: any;
+  isLoading = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -258,10 +258,10 @@ export class CalculatorComponent implements OnInit {
         initialValue: parseFloat(initialValue),
         months: parseInt(months, 10)
       }).subscribe({
-        next: (response) => {
+        next: (response: CdbCalculationResponse) => {
           this.result.set(response);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Calculation error:', error);
         }
       });
