@@ -12,7 +12,7 @@ public class CdbCalculation
     {
         if (initialValue <= 0)
             throw new ArgumentException("Initial value must be greater than zero.", nameof(initialValue));
-        
+
         if (months < 1)
             throw new ArgumentException("Months must be at least 1.", nameof(months));
 
@@ -20,6 +20,7 @@ public class CdbCalculation
         const decimal taxBracket = 1.08m;
         decimal currentValue = initialValue;
 
+        // Cálculo iterativo composto mês a mês
         for (int i = 0; i < months; i++)
         {
             decimal monthlyRate = 1 + (cdi * taxBracket);
@@ -36,9 +37,9 @@ public class CdbCalculation
         {
             InitialValue = initialValue,
             Months = months,
-            GrossValue = Math.Round(grossValue, 2),
-            IncomeTax = Math.Round(incomeTax, 2),
-            NetValue = Math.Round(netValue, 2)
+            GrossValue = grossValue, // Precisão total preservada
+            IncomeTax = incomeTax,   // Precisão total preservada
+            NetValue = netValue      // Precisão total preservada
         };
     }
 

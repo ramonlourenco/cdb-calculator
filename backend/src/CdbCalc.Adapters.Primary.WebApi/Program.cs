@@ -2,13 +2,12 @@ using CdbCalc.Adapters.Primary.WebApi.Middlewares;
 using CdbCalc.Application;
 using CdbCalc.Domain;
 using Serilog;
-using Serilog.Formatting.Json;
 
-var builder = WebApplicationBuilder.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .WriteTo.Console(new JsonFormatter())
+    .WriteTo.Console()
     .CreateLogger();
 
 builder.Host.UseSerilog();

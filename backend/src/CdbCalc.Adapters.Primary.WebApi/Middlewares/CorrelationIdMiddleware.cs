@@ -23,7 +23,7 @@ public class CorrelationIdMiddleware
 
         context.Response.OnStarting(() =>
         {
-            context.Response.Headers.Add(CorrelationIdHeader, correlationId);
+            context.Response.Headers[CorrelationIdHeader] = correlationId;
             return Task.CompletedTask;
         });
 
@@ -33,7 +33,7 @@ public class CorrelationIdMiddleware
         }
         finally
         {
-            LogContext.RemoveProperty("CorrelationId");
+            // LogContext automatically disposes when PushProperty scope ends
         }
     }
 }
