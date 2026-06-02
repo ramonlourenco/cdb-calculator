@@ -1,0 +1,20 @@
+root = true
+
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{json,yaml,yml}]
+indent_size = 2
+indent_style = space
+
+[*.{ts,tsx,js,jsx}]
+indent_size = 2
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false
