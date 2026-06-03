@@ -1,23 +1,25 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LoadingInterceptor } from './loading.interceptor';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { loadingInterceptor } from './loading.interceptor';
 import { LoadingService } from '../services/loading.service';
 
-describe('LoadingInterceptor', () => {
+describe('loadingInterceptor', () => {
   let httpMock: HttpTestingController;
   let loadingService: LoadingService;
+  let httpClient: HttpClient;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
         LoadingService,
-        { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
+        provideHttpClient(withInterceptors([loadingInterceptor])),
+        provideHttpClientTesting()
       ]
     });
     httpMock = TestBed.inject(HttpTestingController);
     loadingService = TestBed.inject(LoadingService);
+    httpClient = TestBed.inject(HttpClient);
   });
 
   afterEach(() => {
@@ -25,17 +27,27 @@ describe('LoadingInterceptor', () => {
   });
 
   it('should set isLoading to true during request and false when complete', (done) => {
-    const httpClient = TestBed.inject(require('@angular/common/http').HttpClient);
-
+    // 1. Antes da requisição, precisa ser false
     expect(loadingService.isLoading()).toBe(false);
 
-    httpClient.get('http://test.com/api').subscribe(() => {
-      expect(loadingService.isLoading()).toBe(false);
-      done();
+    httpClient.get('http://test.com/api').subscribe({
+      next: () => {
+        // Dados recebidos, mas o fluxo ainda não completou aqui
+      },
+      complete: () => {
+        // 4. O fluxo completou com sucesso! O operador 'finalize' foi executado.
+        expect(loadingService.isLoading()).toBe(false);
+        done();
+      },
+      error: () => {
+        done();
+      }
     });
 
+    // 2. Com a requisição ativa no ar, precisa ser true
     expect(loadingService.isLoading()).toBe(true);
 
+    // 3. Simula a resposta do servidor chegando
     const req = httpMock.expectOne('http://test.com/api');
     req.flush({ data: 'test' });
   });

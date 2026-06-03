@@ -1,19 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { CorrelationIdInterceptor } from './correlation-id.interceptor';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { correlationIdInterceptor } from './correlation-id.interceptor';
 
-describe('CorrelationIdInterceptor', () => {
+describe('correlationIdInterceptor', () => {
   let httpMock: HttpTestingController;
+  let httpClient: HttpClient;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: CorrelationIdInterceptor, multi: true }
+        provideHttpClient(withInterceptors([correlationIdInterceptor])),
+        provideHttpClientTesting()
       ]
     });
     httpMock = TestBed.inject(HttpTestingController);
+    httpClient = TestBed.inject(HttpClient);
     sessionStorage.clear();
   });
 
@@ -23,8 +25,6 @@ describe('CorrelationIdInterceptor', () => {
   });
 
   it('should add X-Correlation-ID header to requests', () => {
-    const httpClient = TestBed.inject(require('@angular/common/http').HttpClient);
-
     httpClient.get('http://test.com/api').subscribe();
 
     const req = httpMock.expectOne('http://test.com/api');
@@ -36,7 +36,6 @@ describe('CorrelationIdInterceptor', () => {
   });
 
   it('should reuse the same correlation ID for multiple requests', () => {
-    const httpClient = TestBed.inject(require('@angular/common/http').HttpClient);
     let firstCorrelationId: string | null = null;
 
     httpClient.get('http://test.com/api1').subscribe();

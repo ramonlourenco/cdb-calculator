@@ -1,7 +1,7 @@
-using System.Text;
-using System.Text.Json;
 using Serilog;
 using Serilog.Context;
+using System.Text;
+using System.Text.Json;
 
 namespace CdbCalc.Adapters.Primary.WebApi.Middlewares;
 

@@ -1,5 +1,3 @@
-using CdbCalc.Application;
-using CdbCalc.Domain;
 using Xunit;
 
 namespace CdbCalc.Application.Tests;
