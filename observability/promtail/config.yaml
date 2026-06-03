@@ -1,0 +1,40 @@
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+positions:
+  filename: /tmp/positions.yaml
+
+scrape_configs:
+  - job_name: docker
+    docker:
+      host: unix:///var/run/docker.sock
+      labels:
+        job: docker
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        target_label: container_name
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: stream
+
+  - job_name: cdb-backend
+    docker:
+      host: unix:///var/run/docker.sock
+      labels:
+        job: cdb-backend
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: cdb-backend
+        action: keep
+      - source_labels: ['__meta_docker_container_name']
+        target_label: container_name
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: service
+
+  - job_name: syslog
+    syslog:
+      listen_address: 0.0.0.0:1514
+      idle_timeout: 60s
+      label_structured_metadata: false
+    relabel_configs:
+      - source_labels: ['__syslog_message_hostname']
+        target_label: hostname
