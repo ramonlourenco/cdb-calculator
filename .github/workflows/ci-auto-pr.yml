@@ -1,0 +1,86 @@
+name: CI & Auto Pull Request
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # ==========================================
+  # VALIDAÇÃO DO BACKEND (.NET)
+  # ==========================================
+  backend-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar Dependências
+        run: dotnet restore
+        working-directory: ./backend
+
+      - name: Validar Build (Sem Warnings como erros se configurado)
+        run: dotnet build --no-restore --configuration Release
+        working-directory: ./backend
+
+      - name: Executar Testes Unitários
+        run: dotnet test --no-build --configuration Release
+        working-directory: ./backend
+
+  # ==========================================
+  # VALIDAÇÃO DO FRONTEND (ANGULAR)
+  # ==========================================
+  frontend-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Instalar Dependências
+        run: npm ci
+        working-directory: ./frontend
+
+      - name: Validar Build de Produção
+        run: npm run build -- --configuration=production
+        working-directory: ./frontend
+
+  # ==========================================
+  # GERAÇÃO AUTOMÁTICA DO PR
+  # ==========================================
+  create-pull-request:
+    needs: [backend-ci, frontend-ci]
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar se o PR já existe
+        id: check_pr
+        run: |
+          prs=$(gh pr list --head "${{ github.ref_name }}" --base main --json number --jq 'length')
+          echo "COUNT=$prs" >> $GITHUB_OUTPUT
+
+      - name: Criar Pull Request Automaticamente
+        if: steps.check_pr.outputs.COUNT == '0'
+        run: |
+          gh pr create \
+            --title "🚀 Feature: ${{ github.ref_name }}" \
+            --body "Automated PR criado pela esteira de CI após validação completa de Build e Testes do Backend (.NET) e Frontend (Angular). Base limpa e pronta para revisão." \
+            --base main \
+            --head "${{ github.ref_name }}"
