@@ -11,7 +11,7 @@ export interface CdbCalculationResponse {
   initialValue: number;
   months: number;
   grossValue: number;
-  incomeTax: number;
+  incomeTax: number;  
   netValue: number;
 }
 

@@ -18,7 +18,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-# Caches e Configurações Locais do Visual Studio (Crucial para limpar o seu print!)
+# Caches e Configurações Locais do Visual Studio
 .vs/
 *.suo
 *.user
@@ -30,7 +30,6 @@ bld/
 _Chutzpah*
 ipch/
 Apex/
-$ those files are local server junk
 [Aa]pplication[Hh]ost.config
 *.nuget.props
 *.nuget.targets
@@ -44,25 +43,43 @@ nunit-*.xml
 CodeCoverage/
 *.clog
 
-# Diretórios do JetBrains Rider / VS Code (Prevenção)
+# Diretórios do JetBrains Rider / VS Code
 .idea/
 .vscode/
 *.sln.iml
 
-# Dependências e Arquivos do .NET Core / Roslyn
-project.lock.json
-project.fragment.lock.json
-artifacts/
-*.Generated.cs
+## =======================================================================
+## PADRÃO NODE / ANGULAR / FRONTEND (NOVO)
+## =======================================================================
 
-# Segredos e Variáveis de Ambiente locais
+# Dependências (O maior vilão do tamanho de arquivos)
+node_modules/
+/frontend/node_modules/
+
+# Caches de compilação do Angular e ferramentas
+.angular/
+/frontend/.angular/
+.cache/
+.npm/
+cdcd..
+# Pastas de build/arquivos gerados para produção
+dist/
+/frontend/dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# Logs do NPM
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Arquivos de configuração local/segredos do Frontend
 .env
-.env.*
-appsettings.Development.json
-appsettings.Local.json
-
-# Sistema Operacional e Variáveis de Pasta
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
