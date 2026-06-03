@@ -1,15 +1,17 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http'; // Importado 'withInterceptorsFromDi'
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { CalculatorComponent } from './app/components/calculator.component';
-import { CorrelationIdInterceptor } from './app/interceptors/correlation-id.interceptor';
-import { LoadingInterceptor } from './app/interceptors/loading.interceptor';
+import { correlationIdInterceptor } from './app/interceptors/correlation-id.interceptor';
+import { loadingInterceptor } from './app/interceptors/loading.interceptor';
 
 bootstrapApplication(CalculatorComponent, {
   providers: [
-    // ATENÇÃO: Adicionado o metódo explicitamente aqui dentro
-    provideHttpClient(withInterceptorsFromDi()), 
-    
-    { provide: HTTP_INTERCEPTORS, useClass: CorrelationIdInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
+    // Configuração moderna para interceptores baseados em funções
+    provideHttpClient(
+      withInterceptors([
+        correlationIdInterceptor,
+        loadingInterceptor
+      ])
+    )
   ]
 }).catch(err => console.error(err));
