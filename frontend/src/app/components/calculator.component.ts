@@ -10,35 +10,35 @@ import { LoadingService } from '../services/loading.service';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   template: `
     <div class="container">
-      <h1>CDB B3 Calculator</h1>
+      <h1>Calculadora de CDB B3</h1>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="initialValue">Initial Value (R$)</label>
+          <label for="initialValue">Valor Inicial (R$)</label>
           <input
             type="number"
             id="initialValue"
             formControlName="initialValue"
-            placeholder="Enter initial value"
+            placeholder="Digite o valor inicial"
             step="0.01"
             min="0"
           />
           <span class="error" *ngIf="isFieldInvalid('initialValue')">
-            Initial value must be greater than zero
+            O valor inicial deve ser maior que zero
           </span>
         </div>
 
         <div class="form-group">
-          <label for="months">Months</label>
+          <label for="months">Meses</label>
           <input
             type="number"
             id="months"
             formControlName="months"
-            placeholder="Enter number of months"
+            placeholder="Digite a quantidade de meses"
             min="1"
           />
           <span class="error" *ngIf="isFieldInvalid('months')">
-            Months must be at least 1
+            A quantidade de meses deve ser pelo menos 1
           </span>
         </div>
 
@@ -47,7 +47,7 @@ import { LoadingService } from '../services/loading.service';
           [disabled]="!form.valid || isLoading()"
           class="btn-primary"
         >
-          {{ isLoading() ? 'Calculating...' : 'Calculate' }}
+          {{ isLoading() ? 'Calculando...' : 'Calcular' }}
         </button>
       </form>
 
@@ -56,26 +56,26 @@ import { LoadingService } from '../services/loading.service';
       </div>
 
       <div class="result-card" *ngIf="result()">
-        <h2>Results</h2>
+        <h2>Resultados</h2>
         <div class="result-item">
-          <span class="label">Initial Value:</span>
-          <span class="value">{{ result()!.initialValue | currency: 'BRL' }}</span>
+          <span class="label">Valor Inicial:</span>
+          <span class="value">{{ formatarBrTruncado(result()!.initialValue) }}</span>
         </div>
         <div class="result-item">
-          <span class="label">Gross Value:</span>
-          <span class="value">{{ result()!.grossValue | currency: 'BRL' }}</span>
+          <span class="label">Valor Bruto:</span>
+          <span class="value">{{ formatarBrTruncado(result()!.grossValue) }}</span>
         </div>
         <div class="result-item">
-          <span class="label">Income Tax:</span>
-          <span class="value">{{ result()!.incomeTax | currency: 'BRL' }}</span>
+          <span class="label">Imposto de Renda:</span>
+          <span class="value" style="color: #dc3545;">- {{ formatarBrTruncado(result()!.incomeTax) }}</span>
         </div>
         <div class="result-item highlight">
-          <span class="label">Net Value:</span>
-          <span class="value">{{ result()!.netValue | currency: 'BRL' }}</span>
+          <span class="label">Valor Líquido:</span>
+          <span class="value" style="color: #28a745;">{{ formatarBrTruncado(result()!.netValue) }}</span>
         </div>
         <div class="result-item">
-          <span class="label">Months:</span>
-          <span class="value">{{ result()!.months }}</span>
+          <span class="label">Prazo:</span>
+          <span class="value">{{ result()!.months }} {{ result()!.months === 1 ? 'mês' : 'meses' }}</span>
         </div>
       </div>
     </div>
@@ -262,9 +262,35 @@ export class CalculatorComponent implements OnInit {
           this.result.set(response);
         },
         error: (error: any) => {
-          console.error('Calculation error:', error);
+          console.error('Erro na requisição do cálculo:', error);
         }
       });
     }
+  }
+
+  /**
+   * Trunca o valor estritamente em 2 casas decimais (sem arredondar) 
+   * e formata no padrão de moeda Brasileiro (pt-BR).
+   */
+  formatarBrTruncado(valor: number | null | undefined): string {
+    if (valor === null || valor === undefined) return '';
+
+    // Separando parte inteira da decimal usando string para evitar imprecisões do tipo float do JS
+    const partes = valor.toString().split('.');
+    const inteiro = partes[0];
+    
+    // Pega somente os 2 primeiros caracteres após o ponto (truncamento cirúrgico)
+    const decimal = partes[1] ? partes[1].substring(0, 2).padEnd(2, '0') : '00';
+    
+    // Reconstrói o número limpo
+    const valorTruncado = parseFloat(`${inteiro}.${decimal}`);
+
+    // Aplica a máscara financeira pt-BR (R$)
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(valorTruncado);
   }
 }
