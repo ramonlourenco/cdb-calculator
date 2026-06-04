@@ -135,8 +135,11 @@ dotnet restore
 # Executar testes unitários
 dotnet test
 
-# Executar testes com cobertura
-dotnet test /p:CollectCoverage=true
+# Executar testes com cobertura no powershell
+dotnet test tests/CdbCalc.Application.Tests/CdbCalc.Application.Tests.csproj "/p:CollectCoverage=true" "/p:VsTestUseMSBuildOutput=false" "/tl:false"
+
+# Executar testes com cobertura no Git Bash:
+dotnet test tests/CdbCalc.Application.Tests/CdbCalc.Application.Tests.csproj -p:CollectCoverage=true -p:VsTestUseMSBuildOutput=false -tl:false
 ```
 
 **Esperado:** Testes passam com cobertura >90%
@@ -156,7 +159,7 @@ npm test
 npm test -- --code-coverage
 
 # Executar lint
-npm run lint
+npx ng lint
 ```
 
 **Esperado:** Todos os testes passam, cobertura >80%

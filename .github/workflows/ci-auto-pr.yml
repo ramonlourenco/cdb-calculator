@@ -16,6 +16,7 @@ jobs:
   # ==========================================
   backend-ci:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -25,55 +26,75 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restaurar Dependências
+        working-directory: ./backend
         run: dotnet restore
-        working-directory: ./backend
 
-      - name: Validar Build (Sem Warnings como erros se configurado)
-        run: dotnet build --no-restore --configuration Release
+      - name: Validar Build
         working-directory: ./backend
+        run: dotnet build --no-restore --configuration Release
 
       - name: Executar Testes Unitários
-        run: dotnet test --no-build --configuration Release
         working-directory: ./backend
+        run: dotnet test --no-build --configuration Release
 
   # ==========================================
   # VALIDAÇÃO DO FRONTEND (ANGULAR)
   # ==========================================
   frontend-ci:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: ./frontend/package-lock.json
 
+      - name: Exibir versões do Node e NPM
+        run: |
+          node -v
+          npm -v
+
       - name: Instalar Dependências
-        run: npm ci
         working-directory: ./frontend
+        run: npm ci
+
+      - name: Executar Lint
+        working-directory: ./frontend
+        run: npm run lint
 
       - name: Validar Build de Produção
-        run: npm run build -- --configuration=production
         working-directory: ./frontend
+        run: npm run build -- --configuration=production
 
   # ==========================================
   # GERAÇÃO AUTOMÁTICA DO PR
   # ==========================================
   create-pull-request:
-    needs: [backend-ci, frontend-ci]
+    needs:
+      - backend-ci
+      - frontend-ci
+
     runs-on: ubuntu-latest
+
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Verificar se o PR já existe
         id: check_pr
         run: |
-          prs=$(gh pr list --head "${{ github.ref_name }}" --base main --json number --jq 'length')
+          prs=$(gh pr list \
+            --head "${{ github.ref_name }}" \
+            --base main \
+            --json number \
+            --jq 'length')
+
           echo "COUNT=$prs" >> $GITHUB_OUTPUT
 
       - name: Criar Pull Request Automaticamente
@@ -81,6 +102,6 @@ jobs:
         run: |
           gh pr create \
             --title "🚀 Feature: ${{ github.ref_name }}" \
-            --body "Automated PR criado pela esteira de CI após validação completa de Build e Testes do Backend (.NET) e Frontend (Angular). Base limpa e pronta para revisão." \
+            --body "Automated PR criado pela esteira de CI após validação completa do Backend (.NET) e Frontend (Angular)." \
             --base main \
             --head "${{ github.ref_name }}"
