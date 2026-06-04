@@ -34,7 +34,7 @@ Apex/
 *.nuget.props
 *.nuget.targets
 
-# Arquivos e diretórios de Testes/Cobertura
+# Arquivos e diretórios de Testes/Cobertura Backend
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 *.VisualState.xml
@@ -56,12 +56,16 @@ CodeCoverage/
 node_modules/
 /frontend/node_modules/
 
+# Cobertura de testes Frontend (Coverage)
+coverage/
+/frontend/coverage/
+
 # Caches de compilação do Angular e ferramentas
 .angular/
 /frontend/.angular/
 .cache/
 .npm/
-cdcd..
+
 # Pastas de build/arquivos gerados para produção
 dist/
 /frontend/dist/
@@ -83,3 +87,4 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+backend/tests/CdbCalc.Application.Tests/coverage.json

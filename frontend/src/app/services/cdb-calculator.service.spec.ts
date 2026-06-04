@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { CdbCalculatorService } from './services/cdb-calculator.service';
+import { CdbCalculatorService, CdbCalculationResponse } from './cdb-calculator.service'; // Ajustado o caminho aqui
 
 describe('CdbCalculatorService', () => {
   let service: CdbCalculatorService;
@@ -24,7 +24,7 @@ describe('CdbCalculatorService', () => {
   });
 
   it('should call calculate endpoint with correct parameters', () => {
-    const mockResponse = {
+    const mockResponse: CdbCalculationResponse = {
       initialValue: 1000,
       months: 12,
       grossValue: 1109.02,
@@ -32,8 +32,10 @@ describe('CdbCalculatorService', () => {
       netValue: 1087.22
     };
 
-    service.calculate({ initialValue: 1000, months: 12 }).subscribe(result => {
-      expect(result).toEqual(mockResponse);
+    service.calculate({ initialValue: 1000, months: 12 }).subscribe({
+      next: (result) => {
+        expect(result).toEqual(mockResponse);
+      }
     });
 
     const req = httpMock.expectOne('http://localhost:8080/api/cdbcalculator/calculate');
@@ -43,12 +45,12 @@ describe('CdbCalculatorService', () => {
   });
 
   it('should handle calculation error', () => {
-    service.calculate({ initialValue: 1000, months: 12 }).subscribe(
-      () => fail('should have failed'),
-      (error) => {
+    service.calculate({ initialValue: 1000, months: 12 }).subscribe({
+      next: () => fail('should have failed'),
+      error: (error) => {
         expect(error.status).toBe(400);
       }
-    );
+    });
 
     const req = httpMock.expectOne('http://localhost:8080/api/cdbcalculator/calculate');
     req.flush('Invalid input', { status: 400, statusText: 'Bad Request' });
