@@ -133,21 +133,6 @@ docker-compose down -v
 ./cleanup.sh  # ou cleanup.bat no Windows
 ```
 
----
-
-## 📖 Documentação Completa
-
-| Documento | Para |
-|-----------|------|
-| **README.md** | Tudo! Guia completo |
-| **DEVELOPMENT.md** | Setup local, debugging |
-| **ARCHITECTURE.md** | Design patterns |
-| **TESTING.md** | Como testar |
-| **DEPLOYMENT.md** | Produção |
-| **TROUBLESHOOTING.md** | Problemas? Consulte aqui |
-
----
-
 ## 🔗 Estrutura Rápida
 
 ```
@@ -188,21 +173,3 @@ cdb-calculator/
 
 ---
 
-## 🎯 Próximo Passo?
-
-1. Leia **README.md** para entender tudo
-2. Explore **ARCHITECTURE.md** para design
-3. Consulte **DEVELOPMENT.md** para local setup
-4. Veja **TESTING.md** para rodar testes
-
----
-
-## ❓ Perguntas?
-
-- 📖 Consulte a documentação (9 arquivos!)
-- 🐛 Abra issue no GitHub
-- 🔐 Segurança? Veja CONTRIBUTING.md
-
----
-
-**Divirta-se calculando CDB! 🎉**
