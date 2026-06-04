@@ -88,3 +88,4 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 backend/tests/CdbCalc.Application.Tests/coverage.json
+backend/tests/CdbCalc.Application.Tests/coverage.cobertura.xml
