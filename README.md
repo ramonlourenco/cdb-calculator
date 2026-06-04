@@ -61,6 +61,8 @@ cdb-calculator/
 │       │
 │       └── app/
 │           ├── components/
+│           │   └── calculator.component.html
+│           │   └── calculator.component.css
 │           │   └── calculator.component.ts            # Standalone component + Signals
 │           │
 │           ├── services/
@@ -79,10 +81,12 @@ cdb-calculator/
     ├── grafana/
     │   ├── datasources/
     │   │   ├── loki.yaml                              # Datasource Loki
-    │   │   └── loki-config.yaml                       # Loki configuration
     │   └── dashboards/
-    │       └── dashboard-provider.yaml                # Dashboard provisioning
+    │       └── dashboard-provider.yaml                # Dashboard 
+    provisioning
     │
+    ├── loki/
+        └── loki-config.yaml                       # Loki configuration
     └── promtail/
         └── config.yaml                                # Promtail logs scraping
 ```
