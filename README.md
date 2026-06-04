@@ -108,9 +108,12 @@ cdb-calculator/
 cd cdb-calculator
 
 # Construa e inicie todos os serviços
-docker-compose up --build
+docker-compose up -d --build
 
 # Aguarde os containers iniciarem (2-3 minutos)
+
+# Para parar o containers/ambiente
+docker-compose down
 ```
 
 ### URLs de Acesso Local
