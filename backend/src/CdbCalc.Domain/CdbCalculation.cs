@@ -37,9 +37,9 @@ public class CdbCalculation
         {
             InitialValue = initialValue,
             Months = months,
-            GrossValue = grossValue, // Precisão total preservada
-            IncomeTax = incomeTax,   // Precisão total preservada
-            NetValue = netValue      // Precisão total preservada
+            GrossValue = grossValue, 
+            IncomeTax = incomeTax,   
+            NetValue = netValue      
         };
     }
 
