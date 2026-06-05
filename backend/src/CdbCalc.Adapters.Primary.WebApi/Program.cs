@@ -7,7 +7,7 @@ using Serilog.Formatting.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ========== CONFIGURAÇÃO ENTERPRISE DO SERILOG ==========
+// ========== CONFIGURAÇÃO DO SERILOG ==========
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
@@ -59,7 +59,6 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
 // ========== MIDDLEWARES DE OBSERVABILIDADE ==========
-// 🔥 AJUSTADO: Sequência limpa e sem duplicidade.
 app.UseMiddleware<CorrelationIdMiddleware>(); // 1. Garante o Correlation ID primeiro
 app.UseMiddleware<HttpLoggingMiddleware>();   // 2. Captura os payloads com o contexto pronto
 
