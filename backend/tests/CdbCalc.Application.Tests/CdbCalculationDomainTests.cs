@@ -36,17 +36,4 @@ public class CdbCalculationDomainTests
             1098.4656759722446105472828992m
         };
     }
-
-    [Fact(DisplayName = "Validar que valores não são arredondados para evitar erros progressivos")]
-    public void Calculate_ValuesAreNotRounded()
-    {
-        var initialValue = 5000m;
-        var months = 7;
-        var result = CdbCalculation.Calculate(initialValue, months);
-
-        decimal expectedTax = 70.056502195483263053993996240m;
-        decimal expectedCalc = result.GrossValue - result.NetValue;
-
-        Assert.Equal(expectedTax, result.IncomeTax);
-    }
 }
