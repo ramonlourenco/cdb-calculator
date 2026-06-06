@@ -9,7 +9,7 @@ import { LoadingService } from '../services/loading.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './calculator.component.html',
-  styleUrl: './calculator.component.css' // <-- Certifique-se de que está no singular "styleUrl" sem colchetes []
+  styleUrl: './calculator.component.css'
 })
 export class CalculatorComponent implements OnInit {
   form!: FormGroup;
@@ -31,7 +31,7 @@ export class CalculatorComponent implements OnInit {
   initializeForm(): void {
     this.form = this.fb.group({
       initialValue: [null, [Validators.required, Validators.min(0.01)]],
-      months: [null, [Validators.required, Validators.min(1)]]
+      months: [null, [Validators.required, Validators.min(2)]]
     });
   }
 
@@ -57,24 +57,14 @@ export class CalculatorComponent implements OnInit {
     }
   }
 
-  /**
-   * Trunca o valor estritamente em 2 casas decimais (sem arredondar) 
-   * e formata no padrão de moeda Brasileiro (pt-BR).
-   */
   formatarBrTruncado(valor: number | null | undefined): string {
     if (valor === null || valor === undefined) return '';
 
-    // Separa a parte inteira da decimal usando string para evitar imprecisões de ponto flutuante do JS
     const partes = valor.toString().split('.');
     const inteiro = partes[0];
-    
-    // Pega estritamente os 2 primeiros dígitos após o ponto (truncamento limpo no front)
     const decimal = partes[1] ? partes[1].substring(0, 2).padEnd(2, '0') : '00';
-    
-    // Reconstrói o valor numérico truncado
     const valorTruncado = parseFloat(`${inteiro}.${decimal}`);
 
-    // Formata utilizando a internacionalização nativa para o padrão de moeda do Brasil (R$)
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',

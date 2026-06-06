@@ -10,21 +10,14 @@ public class CdbCalculation
 
     public static CdbCalculation Calculate(decimal initialValue, int months)
     {
-        if (initialValue <= 0)
-            throw new ArgumentException("Initial value must be greater than zero.", nameof(initialValue));
-
-        if (months < 1)
-            throw new ArgumentException("Months must be at least 1.", nameof(months));
-
         const decimal cdi = 0.009m;
         const decimal taxBracket = 1.08m;
         decimal currentValue = initialValue;
 
-        // Cálculo iterativo composto mês a mês
+        // Cálculo iterativo composto
         for (int i = 0; i < months; i++)
         {
-            decimal monthlyRate = 1 + (cdi * taxBracket);
-            currentValue *= monthlyRate;
+            currentValue *= (1 + (cdi * taxBracket));
         }
 
         decimal grossValue = currentValue;
@@ -37,9 +30,9 @@ public class CdbCalculation
         {
             InitialValue = initialValue,
             Months = months,
-            GrossValue = grossValue, 
-            IncomeTax = incomeTax,   
-            NetValue = netValue      
+            GrossValue = grossValue,
+            IncomeTax = incomeTax,
+            NetValue = netValue
         };
     }
 

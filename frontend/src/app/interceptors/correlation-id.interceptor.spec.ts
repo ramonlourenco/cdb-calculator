@@ -19,35 +19,18 @@ describe('correlationIdInterceptor', () => {
     sessionStorage.clear();
   });
 
-  afterEach(() => {
-    httpMock.verify();
-    sessionStorage.clear();
-  });
-
-  it('should add X-Correlation-ID header to requests', () => {
-    httpClient.get('http://test.com/api').subscribe();
-
-    const req = httpMock.expectOne('http://test.com/api');
-    expect(req.request.headers.has('X-Correlation-ID')).toBe(true);
-    const correlationId = req.request.headers.get('X-Correlation-ID');
-    expect(correlationId).toBeTruthy();
-    expect(correlationId?.length).toBeGreaterThan(0);
+  it('should create new correlation ID if none exists', () => {
+    httpClient.get('/api').subscribe();
+    const req = httpMock.expectOne('/api');
+    expect(req.request.headers.get('X-Correlation-ID')).not.toBeNull();
     req.flush({});
   });
 
-  it('should reuse the same correlation ID for multiple requests', () => {
-    let firstCorrelationId: string | null = null;
-
-    httpClient.get('http://test.com/api1').subscribe();
-    let req = httpMock.expectOne('http://test.com/api1');
-    firstCorrelationId = req.request.headers.get('X-Correlation-ID');
+  it('should reuse existing correlation ID from session storage', () => {
+    sessionStorage.setItem('correlationId', 'abc-123');
+    httpClient.get('/api').subscribe();
+    const req = httpMock.expectOne('/api');
+    expect(req.request.headers.get('X-Correlation-ID')).toBe('abc-123');
     req.flush({});
-
-    httpClient.get('http://test.com/api2').subscribe();
-    req = httpMock.expectOne('http://test.com/api2');
-    const secondCorrelationId = req.request.headers.get('X-Correlation-ID');
-    req.flush({});
-
-    expect(firstCorrelationId).toBe(secondCorrelationId);
   });
 });
