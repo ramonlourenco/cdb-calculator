@@ -26,12 +26,13 @@ public class CdbCalculatorUseCaseTests
         Assert.Throws<ArgumentException>(() => _useCase.Execute(1000m, months));
     }
 
-    [Fact(DisplayName = "Validar que valores válidos não lançam exceção e retornam cálculo")]
-    public void Execute_ValidInputs_ReturnsCalculation()
+    [Fact(DisplayName = "Validar que valores válidos retornam cálculo sem arredondamentos forçados")]
+    public void Execute_ValidInputs_ReturnsExactCalculation()
     {
         var result = _useCase.Execute(1000m, 12);
 
         Assert.NotNull(result);
         Assert.Equal(1000m, result.InitialValue);
+        Assert.Equal(result.GrossValue - result.IncomeTax, result.NetValue);
     }
 }
