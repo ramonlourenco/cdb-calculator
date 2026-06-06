@@ -24,10 +24,10 @@
         id="months"
         formControlName="months"
         placeholder="Digite a quantidade de meses"
-        min="1"
+        min="2"
       />
       <span class="error" *ngIf="isFieldInvalid('months')">
-        A quantidade de meses deve ser pelo menos 1
+        A quantidade de meses deve ser superior a 1
       </span>
     </div>
 
@@ -64,7 +64,7 @@
     </div>
     <div class="result-item">
       <span class="label">Prazo:</span>
-      <span class="value">{{ result()!.months }} {{ result()!.months === 1 ? 'mês' : 'meses' }}</span>
+      <span class="value">{{ result()!.months }} meses</span>
     </div>
   </div>
 </div>
