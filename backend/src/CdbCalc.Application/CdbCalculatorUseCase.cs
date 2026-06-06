@@ -9,7 +9,7 @@ public class CdbCalculatorUseCase : ICdbCalculatorUseCase
         if (initialValue <= 0)
             throw new ArgumentException("Initial value must be greater than zero.", nameof(initialValue));
 
-        if (months <= 1) 
+        if (months <= 1)
             throw new ArgumentException("Months must be greater than 1.", nameof(months));
 
         return CdbCalculation.Calculate(initialValue, months);

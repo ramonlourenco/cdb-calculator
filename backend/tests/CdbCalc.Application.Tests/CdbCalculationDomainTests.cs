@@ -1,5 +1,4 @@
-﻿using CdbCalc.Domain;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace CdbCalc.Domain.Tests;
