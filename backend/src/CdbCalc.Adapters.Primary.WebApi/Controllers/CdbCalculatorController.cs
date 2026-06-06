@@ -20,18 +20,26 @@ public class CdbCalculatorController : ControllerBase
     [HttpPost("calculate")]
     public IActionResult Calculate([FromBody] CdbCalculationRequest request)
     {
-        var calculation = _useCase.Execute(request.InitialValue, request.Months);
-
-        var response = new CdbCalculationResponse
+        try
         {
-            InitialValue = calculation.InitialValue,
-            Months = calculation.Months,
-            GrossValue = calculation.GrossValue,
-            IncomeTax = calculation.IncomeTax,
-            NetValue = calculation.NetValue
-        };
+            var calculation = _useCase.Execute(request.InitialValue, request.Months);
 
-        _logger.LogInformation("CDB calculation executed successfully");
-        return Ok(response);
+            var response = new CdbCalculationResponse
+            {
+                InitialValue = calculation.InitialValue,
+                Months = calculation.Months,
+                GrossValue = calculation.GrossValue,
+                IncomeTax = calculation.IncomeTax,
+                NetValue = calculation.NetValue
+            };
+
+            _logger.LogInformation("CDB calculation executed successfully");
+            return Ok(response);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning($"Invalid request: {ex.Message}");
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }
