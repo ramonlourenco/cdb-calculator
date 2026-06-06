@@ -141,10 +141,10 @@ dotnet restore
 dotnet test
 
 # Executar testes com cobertura no powershell
-dotnet test tests/CdbCalc.Application.Tests/CdbCalc.Application.Tests.csproj "/p:CollectCoverage=true" "/p:VsTestUseMSBuildOutput=false" "/tl:false"
+dotnet test "/p:CollectCoverage=true" "/p:VsTestUseMSBuildOutput=false" "/tl:false"
 
 # Executar testes com cobertura no Git Bash:
-dotnet test tests/CdbCalc.Application.Tests/CdbCalc.Application.Tests.csproj -p:CollectCoverage=true -p:VsTestUseMSBuildOutput=false -tl:false
+dotnet test -p:CollectCoverage=true -p:VsTestUseMSBuildOutput=false -tl:false
 
 ```
 
@@ -213,9 +213,9 @@ O IR é calculado sobre o lucro: $Lucro = VF_{final} - VI_{inicial}$
 
 **Resultado:**
 
-* Valor Bruto: R$ 1.125,00
-* Imposto de Renda: R$ 25,00
-* Valor Líquido: R$ 1.100,00
+* Valor Bruto: R$ 1.123,08
+* Imposto de Renda: R$ 24,61
+* Valor Líquido: R$ 1.098,46
 
 ## 🏗️ Arquitetura Backend (Hexagonal/Ports & Adapters)
 
@@ -492,7 +492,12 @@ Menu > Explore > Datasource: Loki
 ```bash
 cd backend
 dotnet test
-dotnet test /p:CollectCoverage=true
+
+# Executar testes com cobertura no powershell
+dotnet test "/p:CollectCoverage=true" "/p:VsTestUseMSBuildOutput=false" "/tl:false"
+
+# Executar testes com cobertura no Git Bash:
+dotnet test -p:CollectCoverage=true -p:VsTestUseMSBuildOutput=false -tl:false
 
 ```
 
