@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { loadingInterceptor } from './loading.interceptor';
@@ -26,29 +26,29 @@ describe('loadingInterceptor', () => {
     httpMock.verify();
   });
 
-  it('should set isLoading to true during request and false when complete', (done) => {
-    // 1. Antes da requisição, precisa ser false
-    expect(loadingService.isLoading()).toBe(false);
-
-    httpClient.get('http://test.com/api').subscribe({
-      next: () => {
-        // Dados recebidos, mas o fluxo ainda não completou aqui
-      },
-      complete: () => {
-        // 4. O fluxo completou com sucesso! O operador 'finalize' foi executado.
-        expect(loadingService.isLoading()).toBe(false);
-        done();
-      },
-      error: () => {
-        done();
-      }
-    });
-
-    // 2. Com a requisição ativa no ar, precisa ser true
+  it('deve setar loading true durante requisição e false quando completa com sucesso', fakeAsync(() => {
+    httpClient.get('/api').subscribe();
     expect(loadingService.isLoading()).toBe(true);
 
-    // 3. Simula a resposta do servidor chegando
-    const req = httpMock.expectOne('http://test.com/api');
-    req.flush({ data: 'test' });
-  });
+    const req = httpMock.expectOne('/api');
+    req.flush({});
+    tick(0); 
+
+    expect(loadingService.isLoading()).toBe(false);
+  }));
+
+  it('deve garantir loading false mesmo se a requisição falhar', fakeAsync(() => {
+    // Usamos o catchError do subscribe apenas para evitar que o erro suba para o Jasmine
+    httpClient.get('/api').subscribe({
+      error: (err) => expect(err).toBeDefined() 
+    });
+
+    expect(loadingService.isLoading()).toBe(true);
+
+    const req = httpMock.expectOne('/api');
+    req.error(new ProgressEvent('error'));
+    tick(0); 
+
+    expect(loadingService.isLoading()).toBe(false);
+  }));
 });

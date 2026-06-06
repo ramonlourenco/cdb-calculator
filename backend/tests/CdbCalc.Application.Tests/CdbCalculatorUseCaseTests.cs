@@ -1,5 +1,4 @@
-﻿using CdbCalc.Application;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace CdbCalc.Application.Tests;
