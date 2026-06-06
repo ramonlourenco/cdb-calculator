@@ -19,18 +19,29 @@ describe('correlationIdInterceptor', () => {
     sessionStorage.clear();
   });
 
-  it('should create new correlation ID if none exists', () => {
+  afterEach(() => {
+    httpMock.verify();
+    sessionStorage.clear();
+  });
+
+  it('deve gerar novo ID se sessionStorage estiver vazio (cobre o lado direito do ||)', () => {
     httpClient.get('/api').subscribe();
     const req = httpMock.expectOne('/api');
-    expect(req.request.headers.get('X-Correlation-ID')).not.toBeNull();
+    const id = req.request.headers.get('X-Correlation-ID');
+    
+    expect(id).toBeDefined();
+    expect(sessionStorage.getItem('correlationId')).toBe(id);
     req.flush({});
   });
 
-  it('should reuse existing correlation ID from session storage', () => {
-    sessionStorage.setItem('correlationId', 'abc-123');
+  it('deve reutilizar ID existente no sessionStorage (cobre o lado esquerdo do ||)', () => {
+    const existingId = 'fixed-id-123';
+    sessionStorage.setItem('correlationId', existingId);
+    
     httpClient.get('/api').subscribe();
     const req = httpMock.expectOne('/api');
-    expect(req.request.headers.get('X-Correlation-ID')).toBe('abc-123');
+    
+    expect(req.request.headers.get('X-Correlation-ID')).toBe(existingId);
     req.flush({});
   });
 });

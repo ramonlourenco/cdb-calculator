@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface CdbCalculationRequest {
   initialValue: number;
@@ -19,7 +20,7 @@ export interface CdbCalculationResponse {
   providedIn: 'root'
 })
 export class CdbCalculatorService {
-  private apiUrl = 'http://localhost:8080/api/cdbcalculator';
+  private apiUrl = `${environment.apiUrl}/api/cdbcalculator`;
 
   constructor(private http: HttpClient) {}
 

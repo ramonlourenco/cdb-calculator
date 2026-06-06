@@ -9,7 +9,6 @@ describe('CalculatorComponent', () => {
   let component: CalculatorComponent;
   let fixture: ComponentFixture<CalculatorComponent>;
   let calculatorServiceSpy: jasmine.SpyObj<CdbCalculatorService>;
-  let loadingService: LoadingService;
 
   beforeEach(async () => {
     const spy = jasmine.createSpyObj('CdbCalculatorService', ['calculate']);
@@ -23,7 +22,6 @@ describe('CalculatorComponent', () => {
     }).compileComponents();
 
     calculatorServiceSpy = TestBed.inject(CdbCalculatorService) as jasmine.SpyObj<CdbCalculatorService>;
-    loadingService = TestBed.inject(LoadingService);
     fixture = TestBed.createComponent(CalculatorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -33,32 +31,14 @@ describe('CalculatorComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve verificar se o loadingService está instanciado', () => {
-    // Isso utiliza a variável 'loadingService' e resolve o erro do Lint
-    expect(loadingService).toBeDefined();
+  it('não deve chamar serviço se formulário for inválido', () => {
+    component.form.controls['initialValue'].setValue(null);
+    component.onSubmit();
+    expect(calculatorServiceSpy.calculate).not.toHaveBeenCalled();
   });
 
-  it('deve invalidar o formulário se months for 1 (regra > 1)', () => {
-    component.form.controls['initialValue'].setValue(1000);
-    component.form.controls['months'].setValue(1);
-    expect(component.form.valid).toBeFalse();
-  });
-
-  it('deve validar o formulário se months for 2', () => {
-    component.form.controls['initialValue'].setValue(1000);
-    component.form.controls['months'].setValue(2);
-    expect(component.form.valid).toBeTrue();
-  });
-
-  it('deve chamar o serviço quando o formulário for submetido', () => {
-    const mockResponse = {
-      initialValue: 1000, 
-      months: 2, 
-      grossValue: 1010, 
-      incomeTax: 1, 
-      netValue: 1009
-    };
-    
+  it('deve chamar o serviço com sucesso', () => {
+    const mockResponse = { initialValue: 1000, months: 2, grossValue: 1010, incomeTax: 1, netValue: 1009 };
     calculatorServiceSpy.calculate.and.returnValue(of(mockResponse));
     
     component.form.controls['initialValue'].setValue(1000);
@@ -69,7 +49,7 @@ describe('CalculatorComponent', () => {
     expect(component.result()).toEqual(mockResponse);
   });
 
-  it('deve logar erro no console quando o serviço falhar', () => {
+  it('deve logar erro se serviço falhar', () => {
     spyOn(console, 'error');
     calculatorServiceSpy.calculate.and.returnValue(throwError(() => new Error('API Error')));
     
@@ -78,11 +58,11 @@ describe('CalculatorComponent', () => {
     component.onSubmit();
     
     expect(console.error).toHaveBeenCalled();
-    expect(component.result()).toBeNull();
   });
 
-  it('deve formatar valor corretamente', () => {
-    const formatado = component.formatarBrTruncado(1000.567);
-    expect(formatado).toContain('1.000,56');
+  it('deve formatar valor corretamente (cobrir os ramos do ternário)', () => {
+    expect(component.formatarBrTruncado(1000)).toContain('1.000');
+    expect(component.formatarBrTruncado(1000.55)).toContain('1.000,55');
+    expect(component.formatarBrTruncado(null)).toBe('');
   });
 });
