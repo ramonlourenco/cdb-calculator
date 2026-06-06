@@ -35,6 +35,14 @@ export class CalculatorComponent implements OnInit {
     });
   }
 
+  // Bloqueia a digitação de caracteres inválidos
+  onKeyDown(event: KeyboardEvent): void {
+    const invalidChars = ['.', ',', 'e', '-', '+'];
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
@@ -59,17 +67,9 @@ export class CalculatorComponent implements OnInit {
 
   formatarBrTruncado(valor: number | null | undefined): string {
     if (valor === null || valor === undefined) return '';
-
     const partes = valor.toString().split('.');
     const inteiro = partes[0];
     const decimal = partes[1] ? partes[1].substring(0, 2).padEnd(2, '0') : '00';
-    const valorTruncado = parseFloat(`${inteiro}.${decimal}`);
-
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(valorTruncado);
+    return `${inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.')},${decimal}`;
   }
 }

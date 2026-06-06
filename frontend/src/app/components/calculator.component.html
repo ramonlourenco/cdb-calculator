@@ -1,70 +1,30 @@
 <div class="container">
   <h1>Calculadora de CDB B3</h1>
-
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="initialValue">Valor Inicial (R$)</label>
-      <input
-        type="number"
-        id="initialValue"
-        formControlName="initialValue"
-        placeholder="Digite o valor inicial"
-        step="0.01"
-        min="0"
-      />
-      <span class="error" *ngIf="isFieldInvalid('initialValue')">
-        O valor inicial deve ser maior que zero
-      </span>
+      <input type="number" id="initialValue" formControlName="initialValue" placeholder="Digite o valor inicial" step="0.01" min="0" />
+      <span class="error" *ngIf="isFieldInvalid('initialValue')">O valor inicial deve ser maior que zero</span>
     </div>
 
     <div class="form-group">
       <label for="months">Meses</label>
-      <input
-        type="number"
-        id="months"
-        formControlName="months"
-        placeholder="Digite a quantidade de meses"
-        min="2"
-      />
-      <span class="error" *ngIf="isFieldInvalid('months')">
-        A quantidade de meses deve ser superior a 1
-      </span>
+      <input type="number" id="months" formControlName="months" placeholder="Digite a quantidade de meses" min="2" step="1" (keydown)="onKeyDown($event)" />
+      <span class="error" *ngIf="isFieldInvalid('months')">A quantidade de meses deve ser superior a 1</span>
     </div>
 
-    <button
-      type="submit"
-      [disabled]="!form.valid || isLoading()"
-      class="btn-primary"
-    >
+    <button type="submit" [disabled]="!form.valid || isLoading()" class="btn-primary">
       {{ isLoading() ? 'Calculando...' : 'Calcular' }}
     </button>
   </form>
 
-  <div class="loading-overlay" *ngIf="isLoading()">
-    <div class="spinner"></div>
-  </div>
+  <div class="loading-overlay" *ngIf="isLoading()"><div class="spinner"></div></div>
 
   <div class="result-card" *ngIf="result()">
     <h2>Resultados</h2>
-    <div class="result-item">
-      <span class="label">Valor Inicial:</span>
-      <span class="value">{{ formatarBrTruncado(result()!.initialValue) }}</span>
-    </div>
-    <div class="result-item">
-      <span class="label">Valor Bruto:</span>
-      <span class="value">{{ formatarBrTruncado(result()!.grossValue) }}</span>
-    </div>
-    <div class="result-item">
-      <span class="label">Imposto de Renda:</span>
-      <span class="value" style="color: #dc3545;">- {{ formatarBrTruncado(result()!.incomeTax) }}</span>
-    </div>
-    <div class="result-item highlight">
-      <span class="label">Valor Líquido:</span>
-      <span class="value" style="color: #28a745;">{{ formatarBrTruncado(result()!.netValue) }}</span>
-    </div>
-    <div class="result-item">
-      <span class="label">Prazo:</span>
-      <span class="value">{{ result()!.months }} meses</span>
-    </div>
+    <div class="result-item"><span class="label">Valor Inicial:</span><span class="value">{{ formatarBrTruncado(result()!.initialValue) }}</span></div>
+    <div class="result-item"><span class="label">Valor Bruto:</span><span class="value">{{ formatarBrTruncado(result()!.grossValue) }}</span></div>
+    <div class="result-item"><span class="label">Imposto de Renda:</span><span class="value" style="color: #dc3545;">- {{ formatarBrTruncado(result()!.incomeTax) }}</span></div>
+    <div class="result-item highlight"><span class="label">Valor Líquido:</span><span class="value">{{ formatarBrTruncado(result()!.netValue) }}</span></div>
   </div>
 </div>
